@@ -25,6 +25,10 @@ angular.module('btford.markdown', ['ngSanitize']).
         if (attrs.btfMarkdown) {
           scope.$watch(attrs.btfMarkdown, function (newVal) {
             var html = newVal ? $sanitize(markdownConverter.makeHtml(newVal)) : '';
+            // Fix for showdown not adding target="_blank" to []() generated links
+            if (markdownConverter.getOption('openLinksInNewWindow')) {
+              html = html.replace(/<(a)([^>]+)>/gi, '<$1 target="_blank"$2>');
+            }
             element.html(html);
           });
         } else {
